@@ -1,12 +1,13 @@
-package ru.mail.polis.BogdanMendli;
+package ru.mail.polis.bogdanmendli;
+
+import org.jetbrains.annotations.NotNull;
+import ru.mail.polis.DAO;
+import ru.mail.polis.Record;
 
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import org.jetbrains.annotations.NotNull;
-import ru.mail.polis.DAO;
-import ru.mail.polis.Record;
 
 public class DAOImpl implements DAO {
 
