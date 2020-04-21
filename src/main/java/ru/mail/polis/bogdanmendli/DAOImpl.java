@@ -11,7 +11,7 @@ import java.util.TreeMap;
 
 public class DAOImpl implements DAO {
 
-    SortedMap<ByteBuffer, ByteBuffer> map = new TreeMap<>();
+    private final SortedMap<ByteBuffer, ByteBuffer> map = new TreeMap<>();
 
     @NotNull
     @Override
