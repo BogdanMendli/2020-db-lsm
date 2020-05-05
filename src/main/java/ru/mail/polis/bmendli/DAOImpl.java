@@ -85,9 +85,11 @@ public class DAOImpl implements DAO {
             }
         });
 
-        final Iterator<Cell> mergedCellIterator = Iterators.mergeSorted(iterators, Comparator.comparing(Cell::getKey).thenComparing(Cell::getValue));
+        final Iterator<Cell> mergedCellIterator = Iterators.mergeSorted(iterators,
+                Comparator.comparing(Cell::getKey).thenComparing(Cell::getValue));
         final Iterator<Cell> lastCellIterator = Iters.collapseEquals(mergedCellIterator, Cell::getKey);
-        final Iterator<Cell> filteredIterator = Iterators.filter(lastCellIterator, cell -> !cell.getValue().isTombstone());
+        final Iterator<Cell> filteredIterator = Iterators.filter(lastCellIterator,
+                cell -> !cell.getValue().isTombstone());
         return Iterators.transform(filteredIterator, cell -> Record.of(cell.getKey(), cell.getValue().getData()));
     }
 
@@ -136,7 +138,7 @@ public class DAOImpl implements DAO {
         memTable.close();
     }
 
-    private void storeDataFromFile(Path path) {
+    private void storeDataFromFile(@NotNull final Path path) {
         try {
             final String fileName = path.getFileName().toString();
             final String fileGenerationStr = fileName.substring(0, fileName.indexOf(SSTABLE_FILE_END));

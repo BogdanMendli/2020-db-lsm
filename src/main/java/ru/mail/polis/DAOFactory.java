@@ -17,10 +17,10 @@
 package ru.mail.polis;
 
 import org.jetbrains.annotations.NotNull;
+import ru.mail.polis.bmendli.DAOImpl;
 
 import java.io.File;
 import java.io.IOException;
-import ru.mail.polis.bmendli.DAOImpl;
 
 /**
  * Custom {@link DAO} factory.

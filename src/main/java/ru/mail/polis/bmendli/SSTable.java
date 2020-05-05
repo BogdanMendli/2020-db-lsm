@@ -36,7 +36,7 @@ public class SSTable implements Table {
     }
 
     /**
-     * Saves data to file
+     * Saves data to file.
      *
      * @param toFile - file destination
      * @param iterator - data
