@@ -1,5 +1,7 @@
 package ru.mail.polis.bmendli;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-import org.jetbrains.annotations.NotNull;
 
 public class SSTable implements Table {
 
@@ -21,7 +22,7 @@ public class SSTable implements Table {
     private final int count;
 
     /**
-     * Creates SSTable from passed file
+     * Creates SSTable from passed file.
      *
      * @param path - file in which store data
      */
@@ -40,7 +41,8 @@ public class SSTable implements Table {
      * @param toFile - file destination
      * @param iterator - data
      */
-    public static void serialize(@NotNull final File toFile, @NotNull final Iterator<Cell> iterator) throws IOException {
+    public static void serialize(@NotNull final File toFile,
+                                 @NotNull final Iterator<Cell> iterator) throws IOException {
         try (FileChannel file = new FileOutputStream(toFile).getChannel()) {
             final List<Integer> offsets = new ArrayList<>();
             int offset = 0;
@@ -66,9 +68,7 @@ public class SSTable implements Table {
                     file.write(data);
                 }
             }
-
-            final int count = offsets.size();
-            AtomicReference<IOException> ioe = new AtomicReference<>();
+            final AtomicReference<IOException> ioe = new AtomicReference<>();
             offsets.forEach(offsetValue -> {
                 try {
                     file.write(ByteBuffer.allocate(Integer.BYTES)
@@ -83,6 +83,7 @@ public class SSTable implements Table {
                 throw ioException;
             }
 
+            final int count = offsets.size();
             file.write(ByteBuffer.allocate(Integer.BYTES).putInt(count).rewind());
         }
     }

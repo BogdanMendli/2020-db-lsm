@@ -1,9 +1,10 @@
 package ru.mail.polis.bmendli;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
-import org.jetbrains.annotations.NotNull;
 
 public interface Table {
 

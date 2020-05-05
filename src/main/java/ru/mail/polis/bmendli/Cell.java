@@ -1,8 +1,9 @@
 package ru.mail.polis.bmendli;
 
-import java.nio.ByteBuffer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.nio.ByteBuffer;
 
 public class Cell implements Comparable<Cell> {
 

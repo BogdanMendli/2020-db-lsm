@@ -1,6 +1,12 @@
 package ru.mail.polis.bmendli;
 
 import com.google.common.collect.Iterators;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
+import ru.mail.polis.DAO;
+import ru.mail.polis.Iters;
+import ru.mail.polis.Record;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -15,11 +21,6 @@ import java.util.List;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.stream.Stream;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.jetbrains.annotations.NotNull;
-import ru.mail.polis.DAO;
-import ru.mail.polis.Iters;
-import ru.mail.polis.Record;
 
 /**
  * Persistent storage.
@@ -44,9 +45,9 @@ public class DAOImpl implements DAO {
 
     /**
      * Creates DAO from file storage, data from file will be store in immutable SSTable
-     * and new data - MemTable
+     * and new data - MemTable.
      *
-     * @param storage - file in which store data
+     * @param storage       - file in which store data
      * @param tableByteSize - max table byte size
      */
     public DAOImpl(final File storage, final long tableByteSize) {
@@ -64,17 +65,7 @@ public class DAOImpl implements DAO {
                                 && !path.toFile().isDirectory()
                                 && !name.substring(0, name.indexOf(SSTABLE_FILE_END)).matches(FILE_NAME_REGEX);
                     })
-                    .forEach(path -> {
-                        try {
-                            final String fileName = path.getFileName().toString();
-                            final String fileGenerationStr = fileName.substring(0, fileName.indexOf(SSTABLE_FILE_END));
-                            final int fileGeneration = Integer.parseInt(fileGenerationStr);
-                            generation = Math.max(generation, fileGeneration);
-                            ssTables.put(fileGeneration, new SSTable(path));
-                        } catch (IOException e) {
-                            throw new UncheckedIOException(e);
-                        }
-                    });
+                    .forEach(this::storeDataFromFile);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -131,7 +122,7 @@ public class DAOImpl implements DAO {
     }
 
     /**
-     * Saving data on the disk
+     * Saving data on the disk.
      */
     public void flush() throws IOException {
         final File file = new File(storage, generation + SSTABLE_TMP_FILE_END);
@@ -143,5 +134,17 @@ public class DAOImpl implements DAO {
         ssTables.put(generation, new SSTable(dst.toPath()));
         generation++;
         memTable.close();
+    }
+
+    private void storeDataFromFile(Path path) {
+        try {
+            final String fileName = path.getFileName().toString();
+            final String fileGenerationStr = fileName.substring(0, fileName.indexOf(SSTABLE_FILE_END));
+            final int fileGeneration = Integer.parseInt(fileGenerationStr);
+            generation = Math.max(generation, fileGeneration);
+            ssTables.put(fileGeneration, new SSTable(path));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }

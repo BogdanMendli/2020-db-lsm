@@ -1,11 +1,12 @@
 package ru.mail.polis.bmendli;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class MemTable implements Table {
 
@@ -14,7 +15,7 @@ public class MemTable implements Table {
     private long size;
 
     /**
-     * Memory storage for new data
+     * Memory storage for new data.
      */
     public MemTable() {
         map = new TreeMap<>();

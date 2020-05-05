@@ -11,7 +11,7 @@ public class Value implements Comparable<Value> {
     private final long timestamp;
 
     /**
-     *  Creates new data wrapper, data may be null - tombstone
+     *  Creates new data wrapper, data may be null - tombstone.
      *
      * @param data - new data
      * @param timestamp - time when data was saved
