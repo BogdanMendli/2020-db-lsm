@@ -68,19 +68,11 @@ public class SSTable implements Table {
                     file.write(data);
                 }
             }
-            final AtomicReference<IOException> ioe = new AtomicReference<>();
-            offsets.forEach(offsetValue -> {
-                try {
-                    file.write(ByteBuffer.allocate(Integer.BYTES)
-                            .putInt(offsetValue)
-                            .rewind());
-                } catch (IOException e) {
-                    ioe.set(e);
-                }
-            });
-            final IOException ioException = ioe.get();
-            if (ioException != null) {
-                throw ioException;
+
+            for (int offsetValue: offsets) {
+                file.write(ByteBuffer.allocate(Integer.BYTES)
+                        .putInt(offsetValue)
+                        .rewind());
             }
 
             final int count = offsets.size();
