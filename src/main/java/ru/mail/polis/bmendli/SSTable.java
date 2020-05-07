@@ -13,7 +13,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class SSTable implements Table {
 
@@ -69,7 +68,7 @@ public class SSTable implements Table {
                 }
             }
 
-            for (int offsetValue: offsets) {
+            for (final int offsetValue: offsets) {
                 file.write(ByteBuffer.allocate(Integer.BYTES)
                         .putInt(offsetValue)
                         .rewind());
