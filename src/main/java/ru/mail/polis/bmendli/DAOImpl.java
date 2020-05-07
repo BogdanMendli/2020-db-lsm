@@ -31,7 +31,7 @@ public class DAOImpl implements DAO {
 
     private static final String SSTABLE_FILE_END = ".dat";
     private static final String SSTABLE_TMP_FILE_END = ".tmp";
-    private static final String FILE_NAME_REGEX = "[a-zA-Z]+";
+    private static final String FILE_NAME_REGEX = "[0-9]+";
 
     @NonNull
     private final File storage;
@@ -63,7 +63,7 @@ public class DAOImpl implements DAO {
                         final String name = path.getFileName().toString();
                         return name.endsWith(SSTABLE_FILE_END)
                                 && !path.toFile().isDirectory()
-                                && !name.substring(0, name.indexOf(SSTABLE_FILE_END)).matches(FILE_NAME_REGEX);
+                                && name.substring(0, name.indexOf(SSTABLE_FILE_END)).matches(FILE_NAME_REGEX);
                     })
                     .forEach(this::storeDataFromFile);
         } catch (IOException e) {
