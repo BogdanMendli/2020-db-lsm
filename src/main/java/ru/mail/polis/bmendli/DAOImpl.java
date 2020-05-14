@@ -74,21 +74,8 @@ public class DAOImpl implements DAO {
 
     @NotNull
     @Override
-    public Iterator<Record> iterator(@NotNull final ByteBuffer from) throws IOException {
-        final List<Iterator<Cell>> iterators = new ArrayList<>(ssTables.size() + 1);
-        iterators.add(memTable.iterator(from));
-        ssTables.descendingMap().values().forEach(ssTable -> {
-            try {
-                iterators.add(ssTable.iterator(from));
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        });
-
-        final Iterator<Cell> mergedCellIterator = Iterators.mergeSorted(iterators,
-                Comparator.comparing(Cell::getKey).thenComparing(Cell::getValue));
-        final Iterator<Cell> lastCellIterator = Iters.collapseEquals(mergedCellIterator, Cell::getKey);
-        final Iterator<Cell> filteredIterator = Iterators.filter(lastCellIterator,
+    public Iterator<Record> iterator(@NotNull final ByteBuffer from) {
+        final Iterator<Cell> filteredIterator = Iterators.filter(cellIterator(from),
                 cell -> !cell.getValue().isTombstone());
         return Iterators.transform(filteredIterator, cell -> Record.of(cell.getKey(), cell.getValue().getData()));
     }
@@ -123,6 +110,24 @@ public class DAOImpl implements DAO {
         });
     }
 
+    @Override
+    public void compact() throws IOException {
+        final Iterator<Cell> cellIterator = cellIterator(ByteBuffer.allocate(0));
+        for (int i = 0; i < generation; i++) {
+            Files.delete(new File(storage, i + SSTABLE_FILE_END).toPath());
+        }
+        generation = 0;
+        final File fileTmp = new File(storage, generation + SSTABLE_TMP_FILE_END);
+        SSTable.serialize(fileTmp, cellIterator);
+        final File fileDst = new File(storage, generation + SSTABLE_FILE_END);
+        final Path targetPath = fileDst.toPath();
+        Files.move(fileTmp.toPath(), targetPath, StandardCopyOption.ATOMIC_MOVE);
+        memTable.close();
+        ssTables.clear();
+        ssTables.put(generation, new SSTable(targetPath));
+        generation++;
+    }
+
     /**
      * Saving data on the disk.
      */
@@ -148,5 +153,21 @@ public class DAOImpl implements DAO {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    private Iterator<Cell> cellIterator(@NotNull final ByteBuffer from) {
+        final List<Iterator<Cell>> iterators = new ArrayList<>(ssTables.size() + 1);
+        iterators.add(memTable.iterator(from));
+        ssTables.descendingMap().values().forEach(ssTable -> {
+            try {
+                iterators.add(ssTable.iterator(from));
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        });
+
+        final Iterator<Cell> mergedCellIterator = Iterators.mergeSorted(iterators,
+                Comparator.comparing(Cell::getKey).thenComparing(Cell::getValue));
+        return Iters.collapseEquals(mergedCellIterator, Cell::getKey);
     }
 }
