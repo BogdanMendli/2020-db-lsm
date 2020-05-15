@@ -113,8 +113,11 @@ public class DAOImpl implements DAO {
     @Override
     public void compact() throws IOException {
         final Iterator<Cell> cellIterator = cellIterator(ByteBuffer.allocate(0));
+        final List<File> oldFiles = new ArrayList<>(generation);
         for (int i = 0; i < generation; i++) {
-            Files.delete(new File(storage, i + SSTABLE_FILE_END).toPath());
+            final File dest = new File(storage, i + "_old" + SSTABLE_FILE_END);
+            new File(storage, i + SSTABLE_FILE_END).renameTo(dest);
+            oldFiles.add(dest);
         }
         generation = 0;
         final File fileTmp = new File(storage, generation + SSTABLE_TMP_FILE_END);
@@ -122,6 +125,9 @@ public class DAOImpl implements DAO {
         final File fileDst = new File(storage, generation + SSTABLE_FILE_END);
         final Path targetPath = fileDst.toPath();
         Files.move(fileTmp.toPath(), targetPath, StandardCopyOption.ATOMIC_MOVE);
+        for (File oldFile : oldFiles) {
+            Files.delete(oldFile.toPath());
+        }
         memTable.close();
         ssTables.clear();
         ssTables.put(generation, new SSTable(targetPath));
