@@ -125,7 +125,7 @@ public class DAOImpl implements DAO {
         final File fileDst = new File(storage, generation + SSTABLE_FILE_END);
         final Path targetPath = fileDst.toPath();
         Files.move(fileTmp.toPath(), targetPath, StandardCopyOption.ATOMIC_MOVE);
-        for (File oldFile : oldFiles) {
+        for (final File oldFile : oldFiles) {
             Files.delete(oldFile.toPath());
         }
         memTable.close();
