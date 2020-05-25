@@ -144,7 +144,8 @@ public final class SSTable implements Table {
             fileChannel.read(expireTimeBuffer, offset);
             final long expireTime = expireTimeBuffer.rewind().getLong();
 
-            final boolean isExpire = expireTime > Value.NO_EXPIRATION && timestamp + expireTime < System.currentTimeMillis();
+            final boolean isExpire = expireTime > Value.NO_EXPIRATION
+                    && timestamp + expireTime < System.currentTimeMillis();
             if (timestamp < 0 || isExpire) {
                 return new Cell(keyByteBuffer.rewind(), new Value(-timestamp, Value.NO_EXPIRATION));
             } else {
