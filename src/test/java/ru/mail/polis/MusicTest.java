@@ -12,6 +12,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import ru.mail.polis.bmendli.Value;
 
 /**
  * Music database over {@link DAO}.
@@ -106,13 +107,13 @@ class MusicTest extends TestBase {
     void database(@TempDir File data) throws IOException {
         // Fill music database
         try (DAO dao = DAOFactory.create(data)) {
-            dao.upsert(trackFrom("Ar1", "Al11", "T111"), randomValue());
-            dao.upsert(trackFrom("Ar1", "Al11", "T112"), randomValue());
-            dao.upsert(trackFrom("Ar1", "Al12", "T111"), randomValue());
-            dao.upsert(trackFrom("Ar1", "Al12", "T112"), randomValue());
-            dao.upsert(trackFrom("Ar1", "Al12", "T113"), randomValue());
-            dao.upsert(trackFrom("Ar2", "Al21", "T211"), randomValue());
-            dao.upsert(trackFrom("Ar2", "Al21", "T212"), randomValue());
+            dao.upsert(trackFrom("Ar1", "Al11", "T111"), randomValue(), Value.NO_EXPIRATION);
+            dao.upsert(trackFrom("Ar1", "Al11", "T112"), randomValue(), Value.NO_EXPIRATION);
+            dao.upsert(trackFrom("Ar1", "Al12", "T111"), randomValue(), Value.NO_EXPIRATION);
+            dao.upsert(trackFrom("Ar1", "Al12", "T112"), randomValue(), Value.NO_EXPIRATION);
+            dao.upsert(trackFrom("Ar1", "Al12", "T113"), randomValue(), Value.NO_EXPIRATION);
+            dao.upsert(trackFrom("Ar2", "Al21", "T211"), randomValue(), Value.NO_EXPIRATION);
+            dao.upsert(trackFrom("Ar2", "Al21", "T212"), randomValue(), Value.NO_EXPIRATION);
         }
 
         // Open music database

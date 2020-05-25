@@ -30,6 +30,7 @@ import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
 import static org.junit.jupiter.api.Assertions.*;
+import ru.mail.polis.bmendli.Value;
 
 /**
  * Functional unit tests for {@link DAO} implementations.
@@ -49,7 +50,7 @@ class BasicTest extends TestBase {
         final ByteBuffer key = randomKey();
         final ByteBuffer value = randomValue();
         try (DAO dao = DAOFactory.create(data)) {
-            dao.upsert(key, value);
+            dao.upsert(key, value, Value.NO_EXPIRATION);
             assertEquals(value, dao.get(key));
             assertEquals(value, dao.get(key.duplicate()));
         }
@@ -64,7 +65,7 @@ class BasicTest extends TestBase {
             for (int i = 0; i < count; i++) {
                 final ByteBuffer key = randomKey();
                 final ByteBuffer value = randomValue();
-                dao.upsert(key, value);
+                dao.upsert(key, value, Value.NO_EXPIRATION);
                 assertNull(map.put(key, value));
             }
 
@@ -92,7 +93,7 @@ class BasicTest extends TestBase {
             for (int i = 0; i < count; i++) {
                 final ByteBuffer key = randomKey();
                 final ByteBuffer value = randomValue();
-                dao.upsert(key, value);
+                dao.upsert(key, value, Value.NO_EXPIRATION);
                 assertNull(map.put(key, value));
             }
 
@@ -120,7 +121,7 @@ class BasicTest extends TestBase {
             for (int i = 0; i < count; i++) {
                 final ByteBuffer key = randomKey();
                 final ByteBuffer value = randomValue();
-                dao.upsert(key, value);
+                dao.upsert(key, value, Value.NO_EXPIRATION);
                 assertNull(map.put(key, value));
             }
 
@@ -150,7 +151,7 @@ class BasicTest extends TestBase {
             for (int i = 0; i < count; i++) {
                 final ByteBuffer key = randomKey();
                 final ByteBuffer value = randomValue();
-                dao.upsert(key, value);
+                dao.upsert(key, value, Value.NO_EXPIRATION);
                 assertNull(map.put(key, value));
             }
 
@@ -166,7 +167,7 @@ class BasicTest extends TestBase {
         final ByteBuffer key = randomKey();
         final ByteBuffer value = ByteBuffer.allocate(0);
         try (DAO dao = DAOFactory.create(data)) {
-            dao.upsert(key, value);
+            dao.upsert(key, value, Value.NO_EXPIRATION);
             assertEquals(value, dao.get(key));
             assertEquals(value, dao.get(key.duplicate()));
         }
@@ -178,10 +179,10 @@ class BasicTest extends TestBase {
         final ByteBuffer value1 = randomValue();
         final ByteBuffer value2 = randomValue();
         try (DAO dao = DAOFactory.create(data)) {
-            dao.upsert(key, value1);
+            dao.upsert(key, value1, Value.NO_EXPIRATION);
             assertEquals(value1, dao.get(key));
             assertEquals(value1, dao.get(key.duplicate()));
-            dao.upsert(key, value2);
+            dao.upsert(key, value2, Value.NO_EXPIRATION);
             assertEquals(value2, dao.get(key));
             assertEquals(value2, dao.get(key.duplicate()));
         }
@@ -192,7 +193,7 @@ class BasicTest extends TestBase {
         final ByteBuffer key = randomKey();
         final ByteBuffer value = randomValue();
         try (DAO dao = DAOFactory.create(data)) {
-            dao.upsert(key, value);
+            dao.upsert(key, value, Value.NO_EXPIRATION);
             assertEquals(value, dao.get(key));
             assertEquals(value, dao.get(key.duplicate()));
             dao.remove(key);

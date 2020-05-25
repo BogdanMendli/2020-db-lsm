@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class SSTable implements Table {
+public final class SSTable implements Table {
 
     private final FileChannel fileChannel;
     private final int size;
@@ -54,16 +54,20 @@ public class SSTable implements Table {
 
                 file.write(key);
                 if (cell.getValue().isTombstone()) {
-                    file.write(ByteBuffer.allocate(Long.BYTES)
-                            .putLong(-cell.getValue().getTimestamp())
-                            .rewind());
-                } else {
+                    if (!cell.getValue().isExpiredTombstone()) {
+                        file.write(ByteBuffer.allocate(Long.BYTES)
+                                .putLong(-cell.getValue().getTimestamp())
+                                .rewind());
+                    }
+                } else if (!cell.getValue().isExpire()) {
                     file.write(ByteBuffer.allocate(Long.BYTES)
                             .putLong(cell.getValue().getTimestamp())
                             .rewind());
-
+                    file.write(ByteBuffer.allocate(Long.BYTES)
+                            .putLong(cell.getValue().getExpireTime())
+                            .rewind());
                     final ByteBuffer data = cell.getValue().getData();
-                    offset += data.remaining();
+                    offset += data.remaining() + Long.BYTES;
                     file.write(data);
                 }
             }
@@ -80,7 +84,7 @@ public class SSTable implements Table {
     }
 
     @Override
-    public void upsert(@NotNull final ByteBuffer key, @NotNull final ByteBuffer value) {
+    public void upsert(@NotNull final ByteBuffer key, @NotNull final ByteBuffer value, final long expireTime) {
         throw new UnsupportedOperationException("upsert() not supporting for SSTable");
     }
 
@@ -134,9 +138,14 @@ public class SSTable implements Table {
             final ByteBuffer timestampBuffer = ByteBuffer.allocate(Long.BYTES);
             fileChannel.read(timestampBuffer, offset);
             final long timestamp = timestampBuffer.rewind().getLong();
+            offset += Long.BYTES;
 
-            if (timestamp < 0) {
-                return new Cell(keyByteBuffer.rewind(), new Value(-timestamp));
+            final ByteBuffer expireTimeBuffer = ByteBuffer.allocate(Long.BYTES);
+            fileChannel.read(expireTimeBuffer, offset);
+            final long expireTime = expireTimeBuffer.rewind().getLong();
+
+            if (timestamp < 0 || (expireTime > Value.NO_EXPIRATION && timestamp + expireTime < System.currentTimeMillis())) {
+                return new Cell(keyByteBuffer.rewind(), new Value(-timestamp, Value.NO_EXPIRATION));
             } else {
                 offset += Long.BYTES;
                 final int dataSize;
@@ -147,7 +156,7 @@ public class SSTable implements Table {
                 }
                 final ByteBuffer data = ByteBuffer.allocate(dataSize);
                 fileChannel.read(data, offset);
-                return new Cell(keyByteBuffer.rewind(), new Value(data.rewind(), timestamp));
+                return new Cell(keyByteBuffer.rewind(), new Value(data.rewind(), timestamp, expireTime));
             }
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
@@ -155,7 +164,7 @@ public class SSTable implements Table {
     }
 
     private int getKeyPosition(@NotNull final ByteBuffer from) throws IOException {
-        assert count > 0;
+        assert count >= 0;
 
         int left = 0;
         int right = count - 1;

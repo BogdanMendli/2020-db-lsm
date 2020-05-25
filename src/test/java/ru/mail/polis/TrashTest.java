@@ -12,6 +12,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import ru.mail.polis.bmendli.Value;
 
 /**
  * Checks ignoring trash files in persistent data directory.
@@ -27,7 +28,7 @@ class TrashTest extends TestBase {
 
         // Create dao and fill data
         try (DAO dao = DAOFactory.create(data)) {
-            dao.upsert(key, value);
+            dao.upsert(key, value, Value.NO_EXPIRATION);
         }
 
         createTrashFile(data, "trash.txt");
@@ -52,7 +53,7 @@ class TrashTest extends TestBase {
 
         // Create dao and fill data
         try (DAO dao = DAOFactory.create(data)) {
-            dao.upsert(key, value);
+            dao.upsert(key, value, Value.NO_EXPIRATION);
         }
 
         createTrashDirectory(data, "trash.txt");
@@ -75,7 +76,7 @@ class TrashTest extends TestBase {
 
         // Create dao and fill data
         try (DAO dao = DAOFactory.create(data)) {
-            dao.upsert(key, value);
+            dao.upsert(key, value, Value.NO_EXPIRATION);
         }
 
         createTrashFile(data, "trash.txt", randomValue());

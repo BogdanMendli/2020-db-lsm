@@ -16,6 +16,7 @@
 
 package ru.mail.polis;
 
+import java.util.Random;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
@@ -29,6 +30,7 @@ import java.util.concurrent.ThreadLocalRandom;
 abstract class TestBase {
     static final int KEY_LENGTH = 16;
     private static final int VALUE_LENGTH = 1024;
+    private static final Random random = new Random();
 
     @NotNull
     static ByteBuffer randomBuffer(final int length) {
@@ -41,6 +43,10 @@ abstract class TestBase {
     @NotNull
     static ByteBuffer randomKey() {
         return randomBuffer(KEY_LENGTH);
+    }
+
+    static int randomExpireTime(final int maxExpireTime) {
+        return random.nextInt(maxExpireTime);
     }
 
     @NotNull

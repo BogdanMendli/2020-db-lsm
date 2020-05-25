@@ -76,13 +76,13 @@ public class DAOImpl implements DAO {
     @Override
     public Iterator<Record> iterator(@NotNull final ByteBuffer from) {
         final Iterator<Cell> filteredIterator = Iterators.filter(cellIterator(from),
-                cell -> !cell.getValue().isTombstone());
+                cell -> !cell.getValue().isTombstone() && !cell.getValue().isExpire());
         return Iterators.transform(filteredIterator, cell -> Record.of(cell.getKey(), cell.getValue().getData()));
     }
 
     @Override
-    public void upsert(@NotNull final ByteBuffer key, @NotNull final ByteBuffer value) throws IOException {
-        memTable.upsert(key.asReadOnlyBuffer(), value.asReadOnlyBuffer());
+    public void upsert(@NotNull final ByteBuffer key, @NotNull final ByteBuffer value, final long expireTime) throws IOException {
+        memTable.upsert(key.asReadOnlyBuffer(), value.asReadOnlyBuffer(), expireTime);
         if (memTable.size() >= tableByteSize) {
             flush();
         }

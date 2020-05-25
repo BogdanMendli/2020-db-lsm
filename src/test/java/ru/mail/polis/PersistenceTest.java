@@ -34,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import ru.mail.polis.bmendli.Value;
 
 /**
  * Persistence tests for {@link DAO} implementations.
@@ -50,7 +51,7 @@ class PersistenceTest extends TestBase {
         try {
             try (DAO dao = DAOFactory.create(data)) {
                 final ByteBuffer value = randomValue();
-                dao.upsert(key, value);
+                dao.upsert(key, value, Value.NO_EXPIRATION);
                 assertEquals(value, dao.get(key));
             }
         } finally {
@@ -73,7 +74,7 @@ class PersistenceTest extends TestBase {
 
         // Create, fill and close storage
         try (DAO dao = DAOFactory.create(data)) {
-            dao.upsert(key, value);
+            dao.upsert(key, value, Value.NO_EXPIRATION);
             assertEquals(value, dao.get(key));
         }
 
@@ -91,7 +92,7 @@ class PersistenceTest extends TestBase {
 
         // Create dao and fill data
         try (DAO dao = DAOFactory.create(data)) {
-            dao.upsert(key, value);
+            dao.upsert(key, value, Value.NO_EXPIRATION);
             assertEquals(value, dao.get(key));
         }
 
@@ -117,7 +118,7 @@ class PersistenceTest extends TestBase {
 
         // Initial insert
         try (DAO dao = DAOFactory.create(data)) {
-            dao.upsert(key, value);
+            dao.upsert(key, value, Value.NO_EXPIRATION);
             assertEquals(value, dao.get(key));
         }
 
@@ -125,7 +126,7 @@ class PersistenceTest extends TestBase {
         try (DAO dao = DAOFactory.create(data)) {
             // Check and replace
             assertEquals(value, dao.get(key));
-            dao.upsert(key, value2);
+            dao.upsert(key, value2, Value.NO_EXPIRATION);
             assertEquals(value2, dao.get(key));
         }
 
@@ -151,7 +152,7 @@ class PersistenceTest extends TestBase {
                 final ByteBuffer key = randomKey();
                 keys.add(key);
                 final ByteBuffer suffixed = join(key, suffix);
-                dao.upsert(suffixed, value);
+                dao.upsert(suffixed, value, Value.NO_EXPIRATION);
                 assertEquals(value, dao.get(suffixed));
             }
         }
@@ -178,7 +179,7 @@ class PersistenceTest extends TestBase {
                 final ByteBuffer key = randomKey();
                 final ByteBuffer value = join(key, suffix);
                 keys.add(key);
-                dao.upsert(key, value);
+                dao.upsert(key, value, Value.NO_EXPIRATION);
                 assertEquals(value, dao.get(key));
             }
         }
@@ -217,7 +218,7 @@ class PersistenceTest extends TestBase {
                 value.put(valuePayload);
                 value.rewind();
 
-                dao.upsert(key, value);
+                dao.upsert(key, value, Value.NO_EXPIRATION);
 
                 // store the latest value by key or update previously stored one
                 if (i % sampleCount == 0 ||
@@ -253,7 +254,7 @@ class PersistenceTest extends TestBase {
             // Overwrite
             final ByteBuffer value = randomValue();
             try (DAO dao = DAOFactory.create(data)) {
-                dao.upsert(key, value);
+                dao.upsert(key, value, Value.NO_EXPIRATION);
                 assertEquals(value, dao.get(key));
             }
 

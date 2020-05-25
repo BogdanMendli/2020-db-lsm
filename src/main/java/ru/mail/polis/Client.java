@@ -29,6 +29,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import ru.mail.polis.bmendli.Value;
 
 /**
  * Simple console client to {@link DAO}.
@@ -101,7 +102,7 @@ public final class Client {
                         break;
 
                     case "put":
-                        dao.upsert(key, from(tokens.next()));
+                        dao.upsert(key, from(tokens.next()), Value.NO_EXPIRATION);
                         break;
 
                     case "remove":

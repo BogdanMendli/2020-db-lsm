@@ -8,7 +8,7 @@ import java.util.Iterator;
 
 public interface Table {
 
-    void upsert(@NotNull final ByteBuffer key, @NotNull final ByteBuffer value);
+    void upsert(@NotNull final ByteBuffer key, @NotNull final ByteBuffer value, final long expireTime);
 
     void remove(@NotNull final ByteBuffer key);
 

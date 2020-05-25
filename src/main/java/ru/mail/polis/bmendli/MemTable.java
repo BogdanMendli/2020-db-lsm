@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class MemTable implements Table {
+public final class MemTable implements Table {
 
     @NotNull
     private final SortedMap<ByteBuffer, Value> map;
@@ -23,11 +23,11 @@ public class MemTable implements Table {
     }
 
     @Override
-    public void upsert(@NotNull final ByteBuffer key, @NotNull final ByteBuffer value) {
-        @Nullable final Value removedValue = map.put(key, new Value(value));
+    public void upsert(@NotNull final ByteBuffer key, @NotNull final ByteBuffer value, final long expireTime) {
+        @Nullable final Value removedValue = map.put(key, new Value(value, expireTime));
         size += value.remaining();
         if (removedValue == null) {
-            size += key.remaining() + Long.BYTES;
+            size += key.remaining() + Long.BYTES + Long.BYTES;
         } else if (!removedValue.isTombstone()) {
             size -= removedValue.getData().remaining();
         }
@@ -37,7 +37,7 @@ public class MemTable implements Table {
     public void remove(@NotNull final ByteBuffer key) {
         @Nullable final Value removedValue = map.put(key, new Value());
         if (removedValue == null) {
-            size += key.remaining() + Long.BYTES;
+            size += key.remaining() + Long.BYTES + Long.BYTES;
         } else if (!removedValue.isTombstone()) {
             size -= removedValue.getData().remaining();
         }
@@ -50,7 +50,7 @@ public class MemTable implements Table {
                 .tailMap(from)
                 .entrySet()
                 .stream()
-                .map(entry -> new Cell(entry.getKey(), entry.getValue().getData()))
+                .map(entry -> new Cell(entry.getKey(), entry.getValue().isExpire() ? new Value() : entry.getValue()))
                 .iterator();
     }
 
