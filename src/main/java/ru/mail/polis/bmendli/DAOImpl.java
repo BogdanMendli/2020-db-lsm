@@ -81,7 +81,10 @@ public class DAOImpl implements DAO {
     }
 
     @Override
-    public void upsert(@NotNull final ByteBuffer key, @NotNull final ByteBuffer value, final long expireTime) throws IOException {
+    public void upsert(
+            @NotNull final ByteBuffer key,
+            @NotNull final ByteBuffer value,
+            final long expireTime) throws IOException {
         memTable.upsert(key.asReadOnlyBuffer(), value.asReadOnlyBuffer(), expireTime);
         if (memTable.size() >= tableByteSize) {
             flush();

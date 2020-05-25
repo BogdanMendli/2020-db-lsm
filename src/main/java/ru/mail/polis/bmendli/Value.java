@@ -71,6 +71,7 @@ public class Value implements Comparable<Value> {
     public boolean isExpiredTombstone() {
         return isTombstone() && timestamp + TOMBSTONE_EXPIRE_TIME_MS < System.currentTimeMillis();
     }
+    
     @Override
     public int compareTo(@NotNull final Value value) {
         return -Long.compare(timestamp, value.timestamp);
