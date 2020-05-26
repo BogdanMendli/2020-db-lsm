@@ -30,7 +30,7 @@ public class ExpirationTest extends TestBase {
             dao.upsert(fourthKey, randomValue(), expireTime);
             dao.upsert(fifthKey, randomValue(), expireTime);
 
-            Thread.sleep(expireTime);
+            Thread.sleep(expireTime + 100);
 
             assertThrows(NoSuchElementException.class, () -> dao.get(firstKey));
             assertThrows(NoSuchElementException.class, () -> dao.get(secondKey));
@@ -49,7 +49,7 @@ public class ExpirationTest extends TestBase {
             dao.upsert(fifthKey, randomValue(), expireTime);
         }
 
-        Thread.sleep(expireTime);
+        Thread.sleep(expireTime + 100);
 
         try (DAO dao = DAOFactory.create(data)) {
             assertThrows(NoSuchElementException.class, () -> dao.get(firstKey));
@@ -94,7 +94,7 @@ public class ExpirationTest extends TestBase {
             assertEquals(fifthValue, dao.get(fifthKey));
             assertEquals(sixthValue, dao.get(sixthKey));
 
-            Thread.sleep(firstExpireTime);
+            Thread.sleep(firstExpireTime + 100);
 
             assertThrows(NoSuchElementException.class, () -> dao.get(firstKey));
             assertThrows(NoSuchElementException.class, () -> dao.get(secondKey));
@@ -104,7 +104,7 @@ public class ExpirationTest extends TestBase {
             assertEquals(sixthValue, dao.get(sixthKey));
         }
 
-        Thread.sleep(secondExpireTime - firstExpireTime);
+        Thread.sleep(secondExpireTime - firstExpireTime + 100);
 
         try (DAO dao = DAOFactory.create(data)) {
             assertThrows(NoSuchElementException.class, () -> dao.get(firstKey));
@@ -133,7 +133,7 @@ public class ExpirationTest extends TestBase {
             assertEquals(firstValue, dao.get(firstKey));
             assertEquals(secondValue, dao.get(secondKey));
 
-            Thread.sleep(firstExpireTime);
+            Thread.sleep(firstExpireTime + 100);
 
             assertThrows(NoSuchElementException.class, () -> dao.get(firstKey));
             assertThrows(NoSuchElementException.class, () -> dao.get(secondKey));
@@ -149,7 +149,7 @@ public class ExpirationTest extends TestBase {
             assertEquals(firstValue, dao.get(firstKey));
             assertEquals(secondValue, dao.get(secondKey));
 
-            Thread.sleep(firstExpireTime);
+            Thread.sleep(firstExpireTime + 100);
 
             assertEquals(firstValue, dao.get(firstKey));
             assertEquals(secondValue, dao.get(secondKey));
@@ -168,7 +168,7 @@ public class ExpirationTest extends TestBase {
             assertEquals(firstValue, dao.get(firstKey));
             assertEquals(secondValue, dao.get(secondKey));
 
-            Thread.sleep(firstExpireTime);
+            Thread.sleep(firstExpireTime + 100);
 
             assertThrows(NoSuchElementException.class, () -> dao.get(firstKey));
             assertEquals(secondValue, dao.get(secondKey));
@@ -187,7 +187,7 @@ public class ExpirationTest extends TestBase {
             assertEquals(firstValue, dao.get(firstKey));
             assertEquals(secondValue, dao.get(secondKey));
 
-            Thread.sleep(firstExpireTime);
+            Thread.sleep(firstExpireTime + 100);
 
             assertEquals(firstValue, dao.get(firstKey));
             assertThrows(NoSuchElementException.class, () -> dao.get(secondKey));
