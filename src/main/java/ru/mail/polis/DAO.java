@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import ru.mail.polis.bmendli.Value;
 
 /**
  * Storage interface.
@@ -95,7 +96,9 @@ public interface DAO extends Closeable {
     /**
      * Inserts or updates value by given key with no expiration.
      */
-    void upsert(@NotNull ByteBuffer key, @NotNull ByteBuffer value) throws IOException;
+    default void upsert(@NotNull final ByteBuffer key, @NotNull final ByteBuffer value) throws IOException {
+        upsert(key, value, Value.NO_EXPIRATION);
+    }
 
     /**
      * Removes value by given key.

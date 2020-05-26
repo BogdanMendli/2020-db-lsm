@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.nio.ByteBuffer;
 
-public class Value implements Comparable<Value> {
+public final class Value implements Comparable<Value> {
 
     public static final int NO_EXPIRATION = 0;
     public static final int TOMBSTONE_EXPIRE_TIME_MS = 10_000;
