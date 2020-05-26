@@ -1,7 +1,6 @@
 package ru.mail.polis.bmendli;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.nio.ByteBuffer;
 import java.util.Iterator;
@@ -24,7 +23,7 @@ public final class MemTable implements Table {
 
     @Override
     public void upsert(@NotNull final ByteBuffer key, @NotNull final ByteBuffer value, final long expireTime) {
-        @Nullable final Value removedValue = map.put(key, new Value(value, expireTime));
+        final Value removedValue = map.put(key, Value.newInstance(value, System.currentTimeMillis(), expireTime));
         size += value.remaining();
         if (removedValue == null) {
             size += key.remaining() + Long.BYTES + Long.BYTES;
@@ -35,7 +34,7 @@ public final class MemTable implements Table {
 
     @Override
     public void remove(@NotNull final ByteBuffer key) {
-        @Nullable final Value removedValue = map.put(key, new Value());
+        final Value removedValue = map.put(key, Value.newInstance());
         if (removedValue == null) {
             size += key.remaining() + Long.BYTES + Long.BYTES;
         } else if (!removedValue.isTombstone()) {
@@ -50,7 +49,9 @@ public final class MemTable implements Table {
                 .tailMap(from)
                 .entrySet()
                 .stream()
-                .map(entry -> new Cell(entry.getKey(), entry.getValue().isExpire() ? new Value() : entry.getValue()))
+                .map(entry -> new Cell(entry.getKey(), entry.getValue().isExpired()
+                        ? Value.newInstance()
+                        : entry.getValue()))
                 .iterator();
     }
 

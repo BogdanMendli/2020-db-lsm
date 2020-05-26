@@ -50,7 +50,7 @@ public class ExpirationTest extends TestBase {
             dao.upsert(fifthKey, randomValue(), expireTime);
         }
 
-        Thread.sleep(2000);
+        Thread.sleep(expireTime);
 
         try (DAO dao = DAOFactory.create(data)) {
             assertThrows(NoSuchElementException.class, () -> dao.get(firstKey));
@@ -105,7 +105,7 @@ public class ExpirationTest extends TestBase {
             assertEquals(sixthValue, dao.get(sixthKey));
         }
 
-        Thread.sleep(secondExpireTime);
+        Thread.sleep(secondExpireTime - firstExpireTime);
 
         try (DAO dao = DAOFactory.create(data)) {
             assertThrows(NoSuchElementException.class, () -> dao.get(firstKey));

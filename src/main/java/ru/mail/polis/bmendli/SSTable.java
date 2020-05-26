@@ -59,7 +59,7 @@ public final class SSTable implements Table {
                                 .putLong(-cell.getValue().getTimestamp())
                                 .rewind());
                     }
-                } else if (!cell.getValue().isExpire()) {
+                } else if (!cell.getValue().isExpired()) {
                     file.write(ByteBuffer.allocate(Long.BYTES)
                             .putLong(cell.getValue().getTimestamp())
                             .rewind());
@@ -144,10 +144,10 @@ public final class SSTable implements Table {
             fileChannel.read(expireTimeBuffer, offset);
             final long expireTime = expireTimeBuffer.rewind().getLong();
 
-            final boolean isExpire = expireTime > Value.NO_EXPIRATION
+            final boolean isExpire = expireTime != Value.NO_EXPIRATION
                     && timestamp + expireTime < System.currentTimeMillis();
             if (timestamp < 0 || isExpire) {
-                return new Cell(keyByteBuffer.rewind(), new Value(-timestamp, Value.NO_EXPIRATION));
+                return new Cell(keyByteBuffer.rewind(), Value.newInstance(-timestamp, Value.NO_EXPIRATION));
             } else {
                 offset += Long.BYTES;
                 final int dataSize;
@@ -158,7 +158,7 @@ public final class SSTable implements Table {
                 }
                 final ByteBuffer data = ByteBuffer.allocate(dataSize);
                 fileChannel.read(data, offset);
-                return new Cell(keyByteBuffer.rewind(), new Value(data.rewind(), timestamp, expireTime));
+                return new Cell(keyByteBuffer.rewind(), Value.newInstance(data.rewind(), timestamp, expireTime));
             }
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);

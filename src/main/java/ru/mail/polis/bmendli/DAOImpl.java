@@ -76,8 +76,13 @@ public class DAOImpl implements DAO {
     @Override
     public Iterator<Record> iterator(@NotNull final ByteBuffer from) {
         final Iterator<Cell> filteredIterator = Iterators.filter(cellIterator(from),
-                cell -> !cell.getValue().isTombstone() && !cell.getValue().isExpire());
+                cell -> !cell.getValue().isTombstone() && !cell.getValue().isExpired());
         return Iterators.transform(filteredIterator, cell -> Record.of(cell.getKey(), cell.getValue().getData()));
+    }
+
+    @Override
+    public void upsert(@NotNull final ByteBuffer key, @NotNull final ByteBuffer value) throws IOException {
+        upsert(key, value, Value.NO_EXPIRATION);
     }
 
     @Override

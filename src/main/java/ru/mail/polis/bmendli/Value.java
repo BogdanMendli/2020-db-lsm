@@ -21,30 +21,22 @@ public class Value implements Comparable<Value> {
      * @param data - new data
      * @param timestamp - time when data was saved
      */
-    public Value(@Nullable final ByteBuffer data, final long timestamp, final long expireTime) {
+    private Value(@Nullable final ByteBuffer data, final long timestamp, final long expireTime) {
         this.data = data;
         this.timestamp = timestamp;
         this.expireTime = expireTime;
     }
 
-    public Value(@Nullable final ByteBuffer data, final long expireTime) {
-        this(data, System.currentTimeMillis(), expireTime);
+    public static Value newInstance() {
+        return new Value(null, System.currentTimeMillis(), NO_EXPIRATION);
     }
 
-    public Value(final long timestamp, final long expireTime) {
-        this(null, timestamp, expireTime);
+    public static Value newInstance(final long timestamp, final long expireTime) {
+        return new Value(null, timestamp, expireTime);
     }
 
-    public Value(final long expireTime) {
-        this(null, expireTime);
-    }
-
-    public Value(@Nullable final ByteBuffer data) {
-        this(data, NO_EXPIRATION);
-    }
-
-    public Value() {
-        this(NO_EXPIRATION);
+    public static Value newInstance(@Nullable final ByteBuffer data, final long timestamp, final long expireTime) {
+        return new Value(data, timestamp, expireTime);
     }
 
     @Nullable
@@ -64,8 +56,8 @@ public class Value implements Comparable<Value> {
         return data == null;
     }
 
-    public boolean isExpire() {
-        return expireTime > NO_EXPIRATION && timestamp + expireTime < System.currentTimeMillis();
+    public boolean isExpired() {
+        return expireTime != NO_EXPIRATION && timestamp + expireTime < System.currentTimeMillis();
     }
 
     public boolean isExpiredTombstone() {

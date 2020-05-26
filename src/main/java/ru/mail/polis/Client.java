@@ -20,7 +20,6 @@ import com.google.common.base.Splitter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.mail.polis.bmendli.Value;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -102,7 +101,7 @@ public final class Client {
                         break;
 
                     case "put":
-                        dao.upsert(key, from(tokens.next()), Value.NO_EXPIRATION);
+                        dao.upsert(key, from(tokens.next()));
                         break;
 
                     case "remove":

@@ -27,7 +27,6 @@ import java.util.Collection;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
-import ru.mail.polis.bmendli.Value;
 
 /**
  * Compaction tests for {@link DAO} implementations
@@ -52,7 +51,7 @@ class CompactionTest extends TestBase {
         for (int round = 0; round < overwrites; round++) {
             try (DAO dao = DAOFactory.create(data)) {
                 for (final ByteBuffer key : keys) {
-                    dao.upsert(key, join(key, value), Value.NO_EXPIRATION);
+                    dao.upsert(key, join(key, value));
                 }
             }
         }
@@ -101,7 +100,7 @@ class CompactionTest extends TestBase {
 
                 // Overwrite
                 for (final ByteBuffer key : keys) {
-                    dao.upsert(key, join(key, value), Value.NO_EXPIRATION);
+                    dao.upsert(key, join(key, value));
                 }
 
                 // Compact
@@ -138,7 +137,7 @@ class CompactionTest extends TestBase {
         // Insert keys
         try (DAO dao = DAOFactory.create(data)) {
             for (final ByteBuffer key : keys) {
-                dao.upsert(key, join(key, value), Value.NO_EXPIRATION);
+                dao.upsert(key, join(key, value));
             }
         }
 

@@ -93,6 +93,11 @@ public interface DAO extends Closeable {
             final long expireTime) throws IOException;
 
     /**
+     * Inserts or updates value by given key with no expiration.
+     */
+    void upsert(@NotNull ByteBuffer key, @NotNull ByteBuffer value) throws IOException;
+
+    /**
      * Removes value by given key.
      */
     void remove(@NotNull ByteBuffer key) throws IOException;

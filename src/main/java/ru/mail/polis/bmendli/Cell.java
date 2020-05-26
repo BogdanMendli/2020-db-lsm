@@ -1,7 +1,6 @@
 package ru.mail.polis.bmendli;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.nio.ByteBuffer;
 
@@ -15,14 +14,6 @@ public class Cell implements Comparable<Cell> {
     public Cell(@NotNull final ByteBuffer key, @NotNull final Value value) {
         this.key = key;
         this.value = value;
-    }
-
-    public Cell(@NotNull final ByteBuffer key, @Nullable final ByteBuffer value) {
-        this(key, new Value(value));
-    }
-
-    public Cell(@NotNull final ByteBuffer key) {
-        this(key, new Value(null));
     }
 
     @NotNull
