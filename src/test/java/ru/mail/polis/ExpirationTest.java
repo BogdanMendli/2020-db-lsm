@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import ru.mail.polis.bmendli.Value;
 
 public class ExpirationTest extends TestBase {
 
@@ -85,8 +84,8 @@ public class ExpirationTest extends TestBase {
             dao.upsert(secondKey, secondValue, firstExpireTime);
             dao.upsert(thirdKey, thirdValue, secondExpireTime);
             dao.upsert(fourthKey, fourthValue, secondExpireTime);
-            dao.upsert(fifthKey, fifthValue, Value.NO_EXPIRATION);
-            dao.upsert(sixthKey, sixthValue, Value.NO_EXPIRATION);
+            dao.upsert(fifthKey, fifthValue);
+            dao.upsert(sixthKey, sixthValue);
 
             assertEquals(firstValue, dao.get(firstKey));
             assertEquals(secondValue, dao.get(secondKey));
@@ -144,8 +143,8 @@ public class ExpirationTest extends TestBase {
         secondValue = randomValue();
 
         try (DAO dao = DAOFactory.create(data)) {
-            dao.upsert(firstKey, firstValue, Value.NO_EXPIRATION);
-            dao.upsert(secondKey, secondValue, Value.NO_EXPIRATION);
+            dao.upsert(firstKey, firstValue);
+            dao.upsert(secondKey, secondValue);
 
             assertEquals(firstValue, dao.get(firstKey));
             assertEquals(secondValue, dao.get(secondKey));
@@ -164,7 +163,7 @@ public class ExpirationTest extends TestBase {
             secondValue = randomValue();
 
             dao.upsert(firstKey, firstValue, firstExpireTime);
-            dao.upsert(secondKey, secondValue, Value.NO_EXPIRATION);
+            dao.upsert(secondKey, secondValue);
 
             assertEquals(firstValue, dao.get(firstKey));
             assertEquals(secondValue, dao.get(secondKey));
@@ -182,7 +181,7 @@ public class ExpirationTest extends TestBase {
             firstValue = randomValue();
             secondValue = randomValue();
 
-            dao.upsert(firstKey, firstValue, Value.NO_EXPIRATION);
+            dao.upsert(firstKey, firstValue);
             dao.upsert(secondKey, secondValue, firstExpireTime);
 
             assertEquals(firstValue, dao.get(firstKey));
